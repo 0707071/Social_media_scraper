@@ -1,0 +1,6 @@
+# Ignore Python cache and logs
+app\__pycache__
+__pycache__
+
+# Ignore virtual environments
+venv
