@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,39 +6,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Social Media Scraper</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .hidden { display: none; }
+    </style>
 </head>
 <body class="bg-light">
     <div class="container mt-5">
-        <h2 class="text-center mb-4">📄 Social Media Scraper</h2>
-        <div class="card shadow p-4">
-            <form action="/" method="POST" enctype="multipart/form-data">
-                <div class="mb-3">
-                    <label for="file" class="form-label">📤 Upload CSV File</label>
-                    <input type="file" class="form-control" name="file" required>
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">
+                <i class="bi bi-file-earmark-text"></i> Social Media Scraper
+            </h2>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mt-3">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
                 </div>
-                <button type="submit" class="btn btn-primary w-100">🚀 Process File</button>
+            {% endif %}
+        {% endwith %}
+
+        <!-- File Upload Form -->
+        <div class="card p-4 shadow">
+            <h4 class="text-center fw-bold"><i class="bi bi-upload"></i> Upload CSV or Excel File</h4>
+            <form action="{{ url_for('main.index') }}" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="file" class="form-label">Choose a CSV or Excel File:</label>
+                    <input type="file" name="file" id="file" class="form-control" required>
+                    <small class="text-muted">Supported formats: <strong>csv, xls, xlsx</strong></small>
+                </div>
+                
+                <!-- Output format selection -->
+                <div class="mb-3">
+                    <label for="format" class="form-label"><i class="bi bi-file-earmark"></i> Select Output Format:</label>
+                    <select name="format" id="format" class="form-select">
+                        <option value="csv" selected>CSV</option>
+                        <option value="excel">Excel (.xlsx)</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-arrow-up-circle"></i> Upload & Process
+                </button>
             </form>
         </div>
 
+        <!-- Display Broken Links -->
         {% if broken_links %}
-        <div class="alert alert-warning mt-4">
-            <h5>⚠️ Broken Links Found:</h5>
-            <ul>
-                {% for link in broken_links %}
-                <li>{{ link }}</li>
-                {% endfor %}
-            </ul>
-        </div>
+            <div class="mt-4">
+                <h4 class="text-danger fw-bold"><i class="bi bi-exclamation-triangle"></i> Broken Links Found:</h4>
+                <ul class="list-group border border-danger">
+                    {% for link in broken_links %}
+                        <li class="list-group-item text-danger fw-semibold">{{ link }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
         {% endif %}
 
+        <!-- Download Processed File -->
         {% if output_file %}
-        <div class="alert alert-success mt-4">
-          <p>✅ File processed successfully! 
-            <a href="{{ url_for('main.download', filename=output_file) }}" class="btn btn-sm btn-success">📥 Download Processed CSV</a>
-          </p>
-        </div>
+            <div class="mt-4 text-center">
+                <h4><i class="bi bi-download"></i> Download Processed File:</h4>
+                <a href="{{ url_for('main.download', filename=output_file) }}" class="btn btn-success">
+                    <i class="bi bi-cloud-download"></i> Download {{ output_file }}
+                </a>
+            </div>
         {% endif %}
-
     </div>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 </body>
 </html>
